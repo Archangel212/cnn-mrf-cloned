@@ -8,6 +8,7 @@ import torchvision
 import os
 import torch.nn.functional as functional
 import datetime
+import pytz
 
 """
 reference:
@@ -91,8 +92,12 @@ def main(config):
         pyramid_content_image.append(content)
         pyramid_style_image.append(style)
 
-    "-----------------create progress folder based on date and time----------"    
-    progress_folder = datetime.datetime.now().strftime("%A_%d-%B-%Y_%H:%M:%S")
+    "-----------------create progress folder based on date and time----------"
+
+    utc_now = pytz.utc.localize(datetime.datetime.now())
+    wib_now = utc_now.astimezone(pytz.timezone("Asia/Jakarta"))    
+    
+    progress_folder = wib_now.strftime("%A_%d-%B-%Y_%H:%M:%S")
     progress_folder = os.path.join(config.progress_path, progress_folder)
     os.makedirs(progress_folder, exist_ok=True)
 
