@@ -110,16 +110,18 @@ class CNNMRF(nn.Module):
             name = str(i)
             model.add_module(name, layer)
 
-            # add content loss layer
+            # take 22nd layer from vgg 
             if i in self.content_layers:
+                # add content loss layer
                 target = model(content_image).detach()
                 content_loss = ContentLoss(target)
                 model.add_module("content_loss_{}".format(next_content_idx), content_loss)
                 content_losses.append(content_loss)
                 next_content_idx += 1
 
-            # add style loss layer
+            # take 11th and 20th layer from vgg 
             if i in self.style_layers:
+                # add style loss layer
                 target_feature = model(style_image).detach()
                 style_loss = StyleLoss(target_feature, patch_size=self.patch_size, mrf_style_stride=self.mrf_style_stride,
                                        mrf_synthesis_stride=self.mrf_synthesis_stride, gpu_chunck_size=self.gpu_chunck_size, device=self.device)
