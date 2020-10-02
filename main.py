@@ -7,6 +7,7 @@ import torch
 import torchvision
 import os
 import torch.nn.functional as functional
+import datetime
 
 """
 reference:
@@ -89,6 +90,13 @@ def main(config):
 
         pyramid_content_image.append(content)
         pyramid_style_image.append(style)
+
+    "-----------------create progress folder based on date and time----------"    
+    progress_folder = datetime.datetime.now().strftime("%A_%d-%B-%Y_%H:%M:%S")
+    progress_folder = os.path.join(config.progress_path, progress_folder)
+    os.makedirs(progress_folder, exist_ok=True)
+
+
     "-----------------start training-------"
     global iter
     iter = 0
@@ -126,7 +134,8 @@ def main(config):
             if (iter + 1) % config.sample_step == 0 or iter + 1 == config.max_iter:
                 image = get_synthesis_image(synthesis, denorm_transform, device)
                 image = functional.interpolate(image.unsqueeze(0), size=content_image.shape[2:4], mode='bilinear')
-                torchvision.utils.save_image(image.squeeze(), 'res-%d-result-%d.jpg' % (i+1, iter + 1))
+                torchvision.utils.save_image(image.squeeze(), 
+                  os.path.join(progress_folder,'res-%d-result-%d.jpg' % (i+1, iter + 1)))
                 print('save image: res-%d-result-%d.jpg' % (i+1, iter + 1))
             iter += 1
             if iter == config.max_iter:
@@ -141,6 +150,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--content_path', type=str, default='./data/content1.jpg')
     parser.add_argument('--style_path', type=str, default='./data/style1.jpg')
+    parser.add_argument('--progress_path', type=str, default='./progress')
     parser.add_argument('--max_iter', type=int, default=100)
     parser.add_argument('--sample_step', type=int, default=50)
     parser.add_argument('--content_weight', type=float, default=1)
@@ -153,3 +163,4 @@ if __name__ == '__main__':
     config = parser.parse_args()
     print(config)
     main(config)
+    
