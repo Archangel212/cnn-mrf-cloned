@@ -1,6 +1,7 @@
 # CNNMRF pytorch
 
 An implement of “Combining markov random fields and convolutional neural networks for image synthesis” in pytorch.
+Cloned from https://github.com/jonzhaocn/cnnmrf-pytorch
 
 ### Version
 
