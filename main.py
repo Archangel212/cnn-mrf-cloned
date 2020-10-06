@@ -130,7 +130,9 @@ def main(config):
         def closure():
             global iter
             optimizer.zero_grad()
-            loss = cnnmrf(synthesis)
+            #loss = cnnmrf(synthesis) calling forward method of TV_Loss, 
+            #StyleLoss_0, StyleLoss_1, Content_Loss, CNNMRF in that order
+            loss = cnnmrf(synthesis) 
             loss.backward(retain_graph=True)
             # print loss
             if (iter + 1) % 10 == 0:

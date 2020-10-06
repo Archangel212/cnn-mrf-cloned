@@ -64,8 +64,11 @@ class StyleLoss(nn.Module):
         for i in range(0, self.style_patches.shape[0], self.gpu_chunck_size):
             i_start = i
             i_end = min(i+self.gpu_chunck_size, self.style_patches.shape[0])
-            weight = self.style_patches[i_start:i_end, :, :, :]
-            response = functional.conv2d(input, weight, stride=self.mrf_synthesis_stride)
+            #self.style_patches are treated as filters
+            filters = self.style_patches[i_start:i_end, :, :, :]
+            #additional conv2d to find best matching of a query patch
+            #a.k.a the filter (style_patch) that gives the maximum response
+            response = functional.conv2d(input, filters, stride=self.mrf_synthesis_stride)
             max_response.append(response.squeeze(dim=0))
         max_response = torch.cat(max_response, dim=0)
 
